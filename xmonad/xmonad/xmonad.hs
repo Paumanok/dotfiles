@@ -147,7 +147,7 @@ myKeys =
     , ("C-<Page_Up>"           , spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
     , ("C-<Page_Down>"         , spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
     -- Screenshot  
-    , ("M-S-s"           , spawn "`scrot -s -e 'xclip -selection clipboard -t image/png -i $f && rm $f'`") --throws away screenshot
+    , ("M-S-s"           , spawn "sleep 0.2;`scrot -s -e 'xclip -selection clipboard -t image/png -i $f && rm $f'`") --throws away screenshot
     --todo save screenshot check obsidian notes
     , ("M-i"             , spawn "insync show &")
     ]
