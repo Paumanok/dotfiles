@@ -290,7 +290,7 @@ clickable ws = "<action=xdotool key Alt_L+"++show i++">"++ws++"</action>"
 -- Run xmonad with the settings you specify. No need to modify this.
 --
 main = do
-    xmproc0 <- spawnPipe "xmobar -x 0 /home/matt/.config/xmobar/xmobarrc"
+    xmproc0 <- spawnPipe "xmobar -x 0 /home/matt/.config/xmobar/xmobarrc2"
     xmproc1 <- spawnPipe "xmobar -x 1 /home/matt/.config/xmobar/xmobarrc"
     xmonad $ docks $ ewmh defaults
         {    logHook = dynamicLogWithPP xmobarPP
