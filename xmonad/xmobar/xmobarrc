@@ -96,7 +96,7 @@ Config {
 
         -- time and date indicator 
         --   (%F = y-m-d date, %a = day of week, %T = h:m:s time)
-        , Run Date           "<fc=#ABABAB>%F (%a) %T</fc>" "date" 1
+        , Run Date           "<fc=#ABABAB>%F (%a) %I:%M:%S %p</fc>" "date" 1
         
         , Run Com "/home/matt/.config/xmobar/trayer-padding-icon.sh" [] "trayerpad" 20
 

@@ -1,0 +1,6 @@
+vim/vim/
+xmonad/xmonad/*.o
+xmonad/xmonad/*.hi
+xmonad/xmonad/xmonad-x86-linux
+xmonad/xmonad/xmonad.hs.good
+xmonad/xmonad/old_configs
