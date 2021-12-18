@@ -14,7 +14,8 @@ import XMonad.Util.EZConfig (additionalKeysP)
 
 
 import XMonad.Layout.Gaps
-
+import XMonad.Layout.Spacing
+import XMonad.Layout.Tabbed
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -199,7 +200,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = gaps [(U,10), (D, 30), (L, 10), (R, 10)] $ avoidStruts (tiled ||| Mirror tiled ||| Full)
+myLayout = spacingWithEdge 2 $ gaps [(U,6), (D, 24), (L, 6), (R, 6)] $ avoidStruts (tiled ||| Mirror tiled ||| Full ||| simpleTabbed)
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
