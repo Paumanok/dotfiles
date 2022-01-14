@@ -16,6 +16,7 @@ import XMonad.Util.EZConfig (additionalKeysP)
 import XMonad.Layout.Gaps
 import XMonad.Layout.Spacing
 import XMonad.Layout.Tabbed
+import XMonad.Layout.Grid
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -102,6 +103,7 @@ myKeys =
 
     -- Swap the focused window and the master window
     , (("M1-S-<Return>"), windows W.swapMaster)
+    , (("M-`"), windows W.swapMaster)
 
     -- Swap the focused window with the next window
     , (("M-S-j" ), windows W.swapDown  )
@@ -200,7 +202,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = spacingWithEdge 2 $ gaps [(U,6), (D, 24), (L, 6), (R, 6)] $ avoidStruts (tiled ||| Mirror tiled ||| Full ||| simpleTabbed)
+myLayout = spacingWithEdge 2 $ gaps [(U,6), (D, 24), (L, 6), (R, 6)] $ avoidStruts (tiled ||| Mirror tiled ||| Full ||| simpleTabbed ||| Grid)
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
@@ -270,7 +272,7 @@ myStartupHook = do
     spawnOnce "picom --config ~/.config/compton.conf &"
     spawnOnce "trayer --edge bottom --align right --widthtype request --padding 3 --SetDockType True --monitor 1 --height 17 --alpha 0 --tint 0x500350 --transparent true &"
     spawnOnce "nm-applet &"
-    spawnOnce "volumeicon &"
+    --spawnOnce "volumeicon &"
     spawnOnce "insync start"
 
 myWorkspaces    = ["Alpha", "Sierra", "Delta", "Foxtrot", "Quebec", "Whiskey", "Echo", "Romeo"]
