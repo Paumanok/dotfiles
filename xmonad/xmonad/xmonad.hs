@@ -4,6 +4,10 @@ import Data.Maybe (fromJust)
 import System.Exit
 import System.IO (hPutStrLn)
 
+import XMonad.Prompt
+import XMonad.Prompt.Input
+import Data.Char (isSpace)
+
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
@@ -35,7 +39,6 @@ myClickJustFocuses :: Bool
 myClickJustFocuses = False
 
 -- Width of the window border in pixels.
---
 myBorderWidth   = 1
 
 -- modMask lets you specify which modkey you want to use. The default
@@ -45,18 +48,7 @@ myBorderWidth   = 1
 myModMask :: KeyMask
 myModMask       = mod4Mask
 
--- The default number of workspaces (virtual screens) and their names.
--- By default we use numeric strings, but any string may be used as a
--- workspace name. The number of workspaces is determined by the length
--- of this list.
---
--- A tagging example:
---
--- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
---
---myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
 -- Border colors for unfocused and focused windows, respectively.
---
 myNormalBorderColor  = "#500350"
 myFocusedBorderColor = "#800680"
 
@@ -153,6 +145,8 @@ myKeys =
     , ("M-S-s"           , spawn "sleep 0.2;`scrot -s -e 'xclip -selection clipboard -t image/png -i $f && rm $f'`") --throws away screenshot
     --todo save screenshot check obsidian notes
     , ("M-i"             , spawn "insync show &")
+
+    , ("M1-="            , nviewPrompt myXPConfig "nview" )
     ]
     ++
 
@@ -216,6 +210,28 @@ myLayout = spacingWithEdge 2 $ gaps [(U,6), (D, 24), (L, 6), (R, 6)] $ avoidStru
      -- Percent of screen to increment by when resizing panes
      delta   = 3/100
 
+-----------------------------------------------------------------------
+--XPrompt Config
+myXPConfig :: XPConfig
+myXPConfig = def
+    { font              = "xft:Bitstream Vera Sans Mono:size=15:bold:antialias=true"
+    , bgColor           = "black"
+    , borderColor       = "black"
+    , fgColor           = "#800680"
+    , position          = CenteredAt {xpCenterY = 0.1, xpWidth = 0.3}
+    , height            = 30
+    }
+
+
+-- nview propmpt
+nviewPrompt :: XPConfig -> String -> X ()
+nviewPrompt c ans =
+    inputPrompt c (trim ans) ?+ \input ->
+        liftIO(runProcessWithInput "/home/matt/.local/bin/scripts/nview" [input] "") >>= nviewPrompt c
+    --where
+    --    trim = f . f
+    --        where f = reverse . dropWhile isSpace
+
 ------------------------------------------------------------------------
 -- Window rules:
 
@@ -275,9 +291,9 @@ myStartupHook = do
     --spawnOnce "volumeicon &"
     spawnOnce "insync start"
 
-myWorkspaces    = ["Alpha", "Sierra", "Delta", "Foxtrot", "Quebec", "Whiskey", "Echo", "Romeo"]
-workspace_keys = [xK_a, xK_s, xK_d, xK_f, xK_q, xK_w, xK_e, xK_r]
-xdo_workspace_keys = ["a","s","d","f","q","w","e","r"]
+myWorkspaces    = ["Alpha", "Sierra", "Delta", "Foxtrot", "Quebec", "Whiskey", "Echo", "Romeo", "Zulu", "X-ray", "Charlie", "Victor", "Obsidian"]
+workspace_keys = [xK_a, xK_s, xK_d, xK_f, xK_q, xK_w, xK_e, xK_r, xK_z, xK_x, xK_c, xK_v, xK_O]
+xdo_workspace_keys = ["a","s","d","f","q","w","e","r","z","x","c","v","o"]
 
 myWorkspaceIndices = M.fromList $ zipWith (,) myWorkspaces xdo_workspace_keys -- (,) == \x y -> (x,y)
 

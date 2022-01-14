@@ -10,3 +10,6 @@ ln -s $PWD/xmonad/xmonad $HOME/.xmonad
 ln -s $PWD/xmonad/xmobar $HOME/.config/xmobar
 
 ln -s $PWD/compton/compton.conf $HOME/.config/compton.conf
+
+ln -s $PWD/scripts $HOME/.local/bin/scripts
+

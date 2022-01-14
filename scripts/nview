@@ -1,0 +1,75 @@
+#!/bin/python3
+import sys
+
+NOTNUM = -2
+ISHEX = 1
+MAYBEHEX = -1
+NOTHEX = 0
+
+h = ['a','b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F', 'x', 'X']
+nh = [chr(i) for i in range(0, 127)]
+#all ascii values not seen in hex
+nh = [c for c in nh if c not in h and c not in [chr(i) for i in range(48,58)]]
+
+
+def ishex(focus):
+    if type(focus) == int:
+        return NOTHEX
+    if '0x' in focus:
+        for c in focus: 
+            if c in nh:
+                print(f"{c} isn't hex")
+                return NOTNUM
+        return ISHEX
+
+    for c in focus:
+        if c in h:
+            return MAYBEHEX
+    return NOTHEX
+
+def get_int(focus):
+
+    ntype = ishex(focus)
+    if ntype == ISHEX or ntype == MAYBEHEX:
+        focusi = int(focus, 16)
+
+    elif ntype == NOTNUM:
+        print("gimme a number dummy" + focus )
+        exit()
+
+    else:
+        focusi = int(focus)
+    return focusi
+
+def do_math(focus):
+    nfoc = focus.split(' ')
+    if '-' in nfoc:
+        res = get_int(nfoc[0]) - get_int(nfoc[2])
+        return res
+    elif '+' in nfoc:
+        res = get_int(nfoc[0]) +  get_int(nfoc[2])
+    elif '/' in nfoc:
+        res = get_int(nfoc[0]) /  get_int(nfoc[2])
+    elif '//' in nfoc:
+        res = get_int(nfoc[0]) //  get_int(nfoc[2])
+    elif '*' in nfoc:
+        res = get_int(nfoc[0]) *  get_int(nfoc[2])
+    elif '%' in nfoc:
+        res = get_int(nfoc[0]) %  get_int(nfoc[2])
+    else:
+        print("not math asshole")
+        exit()
+    
+    return res
+
+if len(sys.argv) < 2:
+    print("Wheres the BEEF?")
+else:
+    focus = sys.argv[1]
+    print(f"{focus} = ") 
+    if len(focus.split(' ')) > 2:
+            focusi = do_math(focus)
+    else:
+        focusi = get_int(focus)
+    
+    print(f"{focusi}        {hex(focusi)}       {bin(focusi)}")
