@@ -1,0 +1,88 @@
+#!/bin/python
+"""
+really shitty pactl output parsing script to quicky display and switch between interfaces
+don't rely on this to ever work super nice
+"""
+import subprocess
+import sys
+
+DEBUG = False
+INFO = True #default to true for xmonad for now
+
+
+#calls pactl list sinks and parses out the sink index, card_name, and pulseaudio sink name
+def call_pulse_list_sinks():
+    sink_data = subprocess.check_output(["pactl", "list", "sinks"])
+    #print(sink_data)
+    sink_data = str(sink_data).split("Sink")
+    del sink_data[0]
+
+    sinks = []
+
+    for i in sink_data:
+        lines = i.split('\\n')
+        sink_index = lines[0].replace("#", "")
+        sink_card_name = ""
+        sink_long_name = lines[2].split(" ")[1]
+        for line in lines:
+            if "alsa.card_name" in line:
+                sink_card_name = line.split("=")[1].replace("\"", "")
+        
+        sinks.append( {"index": sink_index, "card_name": sink_card_name, "name" : sink_long_name})
+
+        if DEBUG: print(f"sink_index: {sink_index}, sink_card_name: {sink_card_name}, sink_long_name: {sink_long_name}")
+    return sinks
+
+#calls pactl get-default-sink and gets pulseaudio sink name
+def call_pulse_default_sinks():
+    def_sink = subprocess.check_output(["pactl", "get-default-sink"])
+    return str(def_sink, 'utf-8').replace('\n', "")
+
+#gets the list of sinks and current default sink, determines what index the current
+#default is at and returns the index and the sinks[<dict>] list
+def get_sink_info():
+    sinks = call_pulse_list_sinks()
+    cur_sink = call_pulse_default_sinks()
+    cur_idx = None
+
+    for sink in sinks:
+        if sink["name"] == cur_sink:
+            cur_idx = sink["index"]
+     
+    
+    if DEBUG: print(f"current sink: {cur_idx}")
+    
+    if cur_idx == None:
+        print("bad idx")
+        exit()
+    else:
+        return cur_idx, sinks
+
+#sets either next or previous sink to current default
+def set_sink(np):
+    cur_idx, sinks = get_sink_info()
+    
+    if np == 'n':
+        next_idx = (int(cur_idx) + 1) % len(sinks)
+    elif np == 'p':
+        next_idx = (int(cur_idx) - 1) % len(sinks)
+    
+    if DEBUG or INFO: print("New sink: {0}:  {1}".format(next_idx, sinks[next_idx]["card_name"]))
+
+    subprocess.call(["pactl", "set-default-sink", str(next_idx)])
+
+
+
+if __name__ == "__main__":
+    
+    if len(sys.argv) > 1:
+        if "d" in sys.argv:
+            DEBUG = True
+        if "i" in sys.argv:
+            INFO = True
+        if "n" in sys.argv:
+            set_sink("n")
+        elif "p" in sys.argv:
+            set_sink("p")
+        else:
+            print("bad input, asshole")

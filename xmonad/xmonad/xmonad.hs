@@ -148,6 +148,7 @@ myKeys =
     , ("M-i"             , spawn "insync show &")
 
     , ("M1-="            , nviewPrompt myXPConfig "nview" )
+    , ("M1--"            , pulse_wranglePrompt myXPConfig "pulse_wrangle" )
     ]
     ++
 
@@ -233,6 +234,11 @@ nviewPrompt c ans =
     --    trim = f . f
     --        where f = reverse . dropWhile isSpace
 
+-- pulsewranlge propmpt
+pulse_wranglePrompt :: XPConfig -> String -> X ()
+pulse_wranglePrompt c ans =
+    inputPrompt c (trim ans) ?+ \input ->
+        liftIO(runProcessWithInput "/home/matt/.local/bin/scripts/pulse_wrangle" [input] "") >>= pulse_wranglePrompt c
 ------------------------------------------------------------------------
 -- Window rules:
 
