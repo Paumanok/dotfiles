@@ -7,6 +7,7 @@ import System.IO (hPutStrLn)
 import XMonad.Prompt
 import XMonad.Prompt.Input
 import Data.Char (isSpace)
+import XMonad.Actions.TreeSelect (toWorkspaces, treeselectWorkspace)
 
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog
@@ -214,7 +215,7 @@ myLayout = spacingWithEdge 2 $ gaps [(U,6), (D, 24), (L, 6), (R, 6)] $ avoidStru
 --XPrompt Config
 myXPConfig :: XPConfig
 myXPConfig = def
-    { font              = "xft:Bitstream Vera Sans Mono:size=15:bold:antialias=true"
+    { font              = "xft:Bitstream Vera Sans Mono:size=18:bold:antialias=true"
     , bgColor           = "black"
     , borderColor       = "black"
     , fgColor           = "#800680"

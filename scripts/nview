@@ -1,4 +1,11 @@
 #!/bin/python3
+"""
+nview: number view, written by matthew smith
+single dec/hex numbers taken and echoed in base10, base16, and base2
+two values + an operator sepearated by spaces will be calculated and printed in all 3 bases.
+float results just printed in dec.
+"""
+
 import sys
 
 NOTNUM = -2
@@ -71,5 +78,7 @@ else:
             focusi = do_math(focus)
     else:
         focusi = get_int(focus)
-    
-    print(f"{focusi}        {hex(focusi)}       {bin(focusi)}")
+    if type(focusi) == float:
+        print(f"{focusi}")
+    else:
+        print(f"{focusi}        {hex(focusi)}       {bin(focusi)}")
