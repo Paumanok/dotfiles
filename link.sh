@@ -11,4 +11,6 @@ ln -s $PWD/xmonad/xmobar $HOME/.config/xmobar
 
 ln -s $PWD/compton/compton.conf $HOME/.config/compton.conf
 
+ln -s $PWD/dunst $HOME/.config/dunst
+
 ln -s $PWD/scripts $HOME/.local/bin/scripts

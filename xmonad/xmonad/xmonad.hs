@@ -138,8 +138,10 @@ myKeys =
     , (("M1-l"), spawn "i3lock -c 000000")
     -- Sound controls
     , ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
-    , ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
-    , ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
+    --, ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
+    , ("<XF86AudioLowerVolume>", spawn "pulse_wrangle v d")
+    --, ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
+    , ("<XF86AudioRaiseVolume>", spawn "pulse_wrangle v u")
     , ("C-<Page_Up>"           , spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
     , ("C-<Page_Down>"         , spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
     -- Screenshot  
@@ -148,7 +150,8 @@ myKeys =
     , ("M-i"             , spawn "insync show &")
 
     , ("M1-="            , nviewPrompt myXPConfig "nview" )
-    , ("M1--"            , pulse_wranglePrompt myXPConfig "pulse_wrangle" )
+    , ("M1-S--"            , pulse_wranglePrompt myXPConfig "pulse_wrangle" )
+    , ("M1--"            , spawn "/home/matt/.local/bin/scripts/pulse_wrangle i n" )
     ]
     ++
 
@@ -297,6 +300,7 @@ myStartupHook = do
     spawnOnce "nm-applet &"
     --spawnOnce "volumeicon &"
     spawnOnce "insync start"
+    spawnOnce "dunst"
 
 myWorkspaces    = ["Alpha", "Sierra", "Delta", "Foxtrot", "Quebec", "Whiskey", "Echo", "Romeo", "Zulu", "X-ray", "Charlie", "Victor", "Obsidian"]
 workspace_keys = [xK_a, xK_s, xK_d, xK_f, xK_q, xK_w, xK_e, xK_r, xK_z, xK_x, xK_c, xK_v, xK_O]
