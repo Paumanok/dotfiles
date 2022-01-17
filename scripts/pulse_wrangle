@@ -93,6 +93,22 @@ def set_vol(ud):
     
     subprocess.call(["dunstify", f"Volume: {cur_vol}%","--urgency=low", "-h", f"int:value:{cur_vol}", "-r", "998"])
 
+def set_mute():
+    
+    sink = "@DEFAULT_SINK@"
+
+    subprocess.call(["pactl", "set-sink-mute", sink, "toggle"])
+   
+    mute_info = subprocess.check_output(["pactl", "get-sink-mute", sink])
+
+    if "yes" in str(mute_info):
+        mute = "Muted"
+        cur_vol = "0"
+    else:
+        cur_vol = str(get_vol())
+        mute = f"Unmuted... {cur_vol}%"
+    
+    subprocess.call(["dunstify", f"Volume: {mute}","--urgency=low", "-h", f"int:value:{cur_vol}", "-r", "998"])
     
 
 if __name__ == "__main__":
@@ -111,6 +127,8 @@ if __name__ == "__main__":
                 set_vol("u")
             elif "d" in sys.argv:
                 set_vol("d")
+            elif "m" in sys.argv:
+                set_mute()
         else:
             get_vol()
             print("bad input, asshole")

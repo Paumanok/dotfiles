@@ -137,7 +137,8 @@ myKeys =
     -- i3 lock screen
     , (("M1-l"), spawn "i3lock -c 000000")
     -- Sound controls
-    , ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
+    --, ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
+    , ("<XF86AudioMute>", spawn "pulse_wrangle v m")
     --, ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
     , ("<XF86AudioLowerVolume>", spawn "pulse_wrangle v d")
     --, ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
