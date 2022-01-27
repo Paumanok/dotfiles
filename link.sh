@@ -13,4 +13,9 @@ ln -s $PWD/compton/compton.conf $HOME/.config/compton.conf
 
 ln -s $PWD/dunst $HOME/.config/dunst
 
+if [ ! -d "$HOME/.local/bin" ];
+then
+    mkdir $HOME/.local/bin
+fi
+
 ln -s $PWD/scripts $HOME/.local/bin/scripts
