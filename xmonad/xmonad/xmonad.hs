@@ -65,8 +65,8 @@ myKeys =
 
     -- launch dmenu
     --, ((modm,               xK_d     ), spawn "i3-dmenu-desktop &")
-    , (("M-S-d"), spawn "dmenu_run -sb \"#500350\"")
-    , (("M-d"), spawn "i3-dmenu-desktop --dmenu='dmenu -i -sb \"#500350\"'") --need the i, wont show firefox et al without
+    , (("M-d"), spawn "dmenu_run -sb \"#500350\"")
+    --, (("M-d"), spawn "i3-dmenu-desktop --dmenu='dmenu -i -sb \"#500350\"'") --need the i, wont show firefox et al without
 
     -- launch gmrun
     , (("M-S-p"), spawn "gmrun")
