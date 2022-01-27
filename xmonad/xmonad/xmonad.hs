@@ -65,7 +65,8 @@ myKeys =
 
     -- launch dmenu
     --, ((modm,               xK_d     ), spawn "i3-dmenu-desktop &")
-    , (("M-d"), spawn "dmenu_run -sb \"#500350\"")
+    , (("M-S-d"), spawn "dmenu_run -sb \"#500350\"")
+    , (("M-d"), spawn "i3-dmenu-desktop --dmenu='dmenu -i -sb \"#500350\"'") --need the i, wont show firefox et al without
 
     -- launch gmrun
     , (("M-S-p"), spawn "gmrun")
@@ -136,23 +137,31 @@ myKeys =
 
     -- i3 lock screen
     , (("M1-l"), spawn "i3lock -c 000000")
+    
     -- Sound controls
-    --, ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
-    , ("<XF86AudioMute>", spawn "pulse_wrangle v m")
-    --, ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
-    , ("<XF86AudioLowerVolume>", spawn "pulse_wrangle v d")
-    --, ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
-    , ("<XF86AudioRaiseVolume>", spawn "pulse_wrangle v u")
+    , ("M1--"                  , spawn "/home/$USER/.local/bin/scripts/pulse_wrangle i n")
+    , ("<XF86AudioMute>"       , spawn "/home/$USER/.local/bin/scripts/pulse_wrangle v m")
+    , ("<XF86AudioLowerVolume>", spawn "/home/$USER/.local/bin/scripts/pulse_wrangle v d")
+    , ("<XF86AudioRaiseVolume>", spawn "/home/$USER/.local/bin/scripts/pulse_wrangle v u")
     , ("C-<Page_Up>"           , spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
     , ("C-<Page_Down>"         , spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
-    -- Screenshot  
-    , ("M-S-s"           , spawn "sleep 0.2;`scrot -s -e 'xclip -selection clipboard -t image/png -i $f && rm $f'`") --throws away screenshot
-    --todo save screenshot check obsidian notes
+    --, ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
+    --, ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
+    --, ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
+    
+    -- Brightness
+    , ("<XF86MonBrightnessUp>" , spawn "xbacklight -inc 10")
+    , ("<XF86MonBrightnessDown>",spawn "xbacklight -dec 2")
+    
+    -- Screenshot 
+    -- throws away screenshot
+    -- todo save screenshot check obsidian notes
+    , ("M-S-s"           , spawn "sleep 0.2;`scrot -s -e 'xclip -selection clipboard -t image/png -i $f && rm $f'`")
     , ("M-i"             , spawn "insync show &")
-
+    
+    -- Prompts
     , ("M1-="            , nviewPrompt myXPConfig "nview" )
-    , ("M1-S--"            , pulse_wranglePrompt myXPConfig "pulse_wrangle" )
-    , ("M1--"            , spawn "/home/matt/.local/bin/scripts/pulse_wrangle i n" )
+    , ("M1-S--"          , pulse_wranglePrompt myXPConfig "pulse_wrangle" )
     ]
     ++
 
@@ -233,7 +242,7 @@ myXPConfig = def
 nviewPrompt :: XPConfig -> String -> X ()
 nviewPrompt c ans =
     inputPrompt c (trim ans) ?+ \input ->
-        liftIO(runProcessWithInput "/home/matt/.local/bin/scripts/nview" [input] "") >>= nviewPrompt c
+    liftIO(runProcessWithInput "/home/matthew/.local/bin/scripts/nview" [input] "") >>= nviewPrompt c
     --where
     --    trim = f . f
     --        where f = reverse . dropWhile isSpace
@@ -242,7 +251,7 @@ nviewPrompt c ans =
 pulse_wranglePrompt :: XPConfig -> String -> X ()
 pulse_wranglePrompt c ans =
     inputPrompt c (trim ans) ?+ \input ->
-        liftIO(runProcessWithInput "/home/matt/.local/bin/scripts/pulse_wrangle" [input] "") >>= pulse_wranglePrompt c
+        liftIO(runProcessWithInput "/home/matthew/.local/bin/scripts/pulse_wrangle" [input] "") >>= pulse_wranglePrompt c
 ------------------------------------------------------------------------
 -- Window rules:
 
@@ -321,12 +330,11 @@ clickable ws = "<action=xdotool key Alt_L+"++show i++">"++ws++"</action>"
 -- Run xmonad with the settings you specify. No need to modify this.
 --
 main = do
-    xmproc0 <- spawnPipe "xmobar -x 0 /home/matt/.config/xmobar/xmobarrc2"
-    xmproc1 <- spawnPipe "xmobar -x 1 /home/matt/.config/xmobar/xmobarrc"
+    xmproc0 <- spawnPipe "xmobar -x 0 /home/matthew/.config/xmobar/xmobarrc"
+    --xmproc1 <- spawnPipe "xmobar -x 1 /home/matt/.config/xmobar/xmobarrc"
     xmonad $ docks $ ewmh defaults
         {    logHook = dynamicLogWithPP xmobarPP
             {    ppOutput = \x -> hPutStrLn xmproc0 x
-                    >> hPutStrLn xmproc1 x
             ,   ppCurrent = xmobarColor "#800680" "" . wrap "<box type=Bottom width=2 mb=2 color=#800680>" "</box>"
             ,   ppHidden = xmobarColor "#7E7E7E" "" . clickable
             ,   ppVisible = xmobarColor "#500350" "" . clickable
