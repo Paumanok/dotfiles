@@ -6,12 +6,14 @@ import System.IO (hPutStrLn)
 
 import XMonad.Prompt
 import XMonad.Prompt.Input
+import XMonad.Prompt.Zsh
 import Data.Char (isSpace)
 import XMonad.Actions.TreeSelect (toWorkspaces, treeselectWorkspace)
 
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.SetWMName
 
 import XMonad.Util.SpawnOnce
 import XMonad.Util.Run
@@ -29,7 +31,7 @@ import qualified Data.Map        as M
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
-myTerminal      = "terminator"
+myTerminal      = "terminator -p TokyoNight"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -66,7 +68,6 @@ myKeys =
     -- launch dmenu
     --, ((modm,               xK_d     ), spawn "i3-dmenu-desktop &")
     , (("M-d"), spawn "dmenu_run -sb \"#500350\"")
-    --, (("M-d"), spawn "i3-dmenu-desktop --dmenu='dmenu -i -sb \"#500350\"'") --need the i, wont show firefox et al without
 
     -- launch gmrun
     , (("M-S-p"), spawn "gmrun")
@@ -137,31 +138,28 @@ myKeys =
 
     -- i3 lock screen
     , (("M1-l"), spawn "i3lock -c 000000")
-    
     -- Sound controls
-    , ("M1--"                  , spawn "/home/$USER/.local/bin/scripts/pulse_wrangle i n")
-    , ("<XF86AudioMute>"       , spawn "/home/$USER/.local/bin/scripts/pulse_wrangle v m")
-    , ("<XF86AudioLowerVolume>", spawn "/home/$USER/.local/bin/scripts/pulse_wrangle v d")
-    , ("<XF86AudioRaiseVolume>", spawn "/home/$USER/.local/bin/scripts/pulse_wrangle v u")
-    , ("C-<Page_Up>"           , spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
-    , ("C-<Page_Down>"         , spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
-    --, ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
-    --, ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
     --, ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
-    
-    -- Brightness
-    , ("<XF86MonBrightnessUp>" , spawn "xbacklight -inc 10")
-    , ("<XF86MonBrightnessDown>",spawn "xbacklight -dec 2")
-    
-    -- Screenshot 
-    -- throws away screenshot
-    -- todo save screenshot check obsidian notes
-    , ("M-S-s"           , spawn "sleep 0.2;`scrot -s -e 'xclip -selection clipboard -t image/png -i $f && rm $f'`")
+    , ("<XF86AudioMute>", spawn "/home/matt/.local/bin/scripts/pulse_wrangle v m")
+    --, ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
+    , ("<XF86AudioLowerVolume>", spawn "/home/matt/.local/bin/scripts/pulse_wrangle v d")
+    --, ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
+    , ("<XF86AudioRaiseVolume>", spawn "/home/matt/.local/bin/scripts/pulse_wrangle v u")
+    , ("c-<page_up>"           , spawn "pactl set-sink-volume @default_sink@ +10%")
+    , ("C-<Page_Down>"         , spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
+    , ("C-<Down>"              , spawn "cmus-remote -u")
+    , ("C-<Right>"             , spawn "cmus-remote -n")
+    , ("C-<Left>"              , spawn "cmus-remote -r")
+    -- Screenshot  
+    , ("M-S-s"           , spawn "sleep 0.2;`scrot -s --freeze -e 'xclip -selection clipboard -t image/png -i $f && rm $f'`") --throws away screenshot
+    --todo save screenshot check obsidian notes
     , ("M-i"             , spawn "insync show &")
-    
-    -- Prompts
+
     , ("M1-="            , nviewPrompt myXPConfig "nview" )
-    , ("M1-S--"          , pulse_wranglePrompt myXPConfig "pulse_wrangle" )
+    , ("M1-S--"            , pulse_wranglePrompt myXPConfig "pulse_wrangle" )
+    , ("M1--"            , spawn "/home/matt/.local/bin/scripts/pulse_wrangle i n" )
+    --, ("C-<Return>"     , zshPrompt def "/home/matt/.local/bin/scripts/zsh-capture-completion.zsh")
+    , ("C-<Return>"     , runPrompt myXPConfig)
     ]
     ++
 
@@ -229,7 +227,7 @@ myLayout = spacingWithEdge 2 $ gaps [(U,6), (D, 24), (L, 6), (R, 6)] $ avoidStru
 --XPrompt Config
 myXPConfig :: XPConfig
 myXPConfig = def
-    { font              = "xft:Bitstream Vera Sans Mono:size=18:bold:antialias=true"
+    { font              = "xft:Bitstream Vera Sans Mono:size=10:bold:antialias=true"
     , bgColor           = "black"
     , borderColor       = "black"
     , fgColor           = "#800680"
@@ -242,7 +240,7 @@ myXPConfig = def
 nviewPrompt :: XPConfig -> String -> X ()
 nviewPrompt c ans =
     inputPrompt c (trim ans) ?+ \input ->
-    liftIO(runProcessWithInput "/home/matthew/.local/bin/scripts/nview" [input] "") >>= nviewPrompt c
+        liftIO(runProcessWithInput "/home/matt/.local/bin/scripts/nview" [input] "") >>= nviewPrompt c
     --where
     --    trim = f . f
     --        where f = reverse . dropWhile isSpace
@@ -251,7 +249,11 @@ nviewPrompt c ans =
 pulse_wranglePrompt :: XPConfig -> String -> X ()
 pulse_wranglePrompt c ans =
     inputPrompt c (trim ans) ?+ \input ->
-        liftIO(runProcessWithInput "/home/matthew/.local/bin/scripts/pulse_wrangle" [input] "") >>= pulse_wranglePrompt c
+        liftIO(runProcessWithInput "/home/matt/.local/bin/scripts/pulse_wrangle" [input] "") >>= pulse_wranglePrompt c
+
+
+runPrompt :: XPConfig -> X()
+runPrompt xpconfig = zshPrompt xpconfig "/home/matt/.local/bin/scripts/zsh-capture-completion.zsh" 
 ------------------------------------------------------------------------
 -- Window rules:
 
@@ -303,11 +305,13 @@ myLogHook = return ()
 --
 -- By default, do nothing.
 myStartupHook = do
+    setWMName "LG3D"
+    spawnOnce "xrandr --output HDMI-0 --left-of DP-0 &"
     spawnOnce "nitrogen --restore &"
     spawnOnce "xsetroot -cursor_name left_ptr"
     spawnOnce "picom --config ~/.config/compton.conf &"
     spawnOnce "trayer --edge bottom --align right --widthtype request --padding 3 --SetDockType True --monitor 1 --height 17 --alpha 0 --tint 0x500350 --transparent true &"
-    spawnOnce "nm-applet &"
+    --spawnOnce "nm-applet &"
     --spawnOnce "volumeicon &"
     spawnOnce "insync start"
     spawnOnce "dunst"
@@ -330,11 +334,12 @@ clickable ws = "<action=xdotool key Alt_L+"++show i++">"++ws++"</action>"
 -- Run xmonad with the settings you specify. No need to modify this.
 --
 main = do
-    xmproc0 <- spawnPipe "xmobar -x 0 /home/matthew/.config/xmobar/xmobarrc"
-    --xmproc1 <- spawnPipe "xmobar -x 1 /home/matt/.config/xmobar/xmobarrc"
+    xmproc0 <- spawnPipe "xmobar -x 0 /home/matt/.config/xmobar/xmobarrc2"
+    xmproc1 <- spawnPipe "xmobar -x 1 /home/matt/.config/xmobar/xmobarrc"
     xmonad $ docks $ ewmh defaults
         {    logHook = dynamicLogWithPP xmobarPP
             {    ppOutput = \x -> hPutStrLn xmproc0 x
+                    >> hPutStrLn xmproc1 x
             ,   ppCurrent = xmobarColor "#800680" "" . wrap "<box type=Bottom width=2 mb=2 color=#800680>" "</box>"
             ,   ppHidden = xmobarColor "#7E7E7E" "" . clickable
             ,   ppVisible = xmobarColor "#500350" "" . clickable
