@@ -165,9 +165,10 @@ require('lazy').setup({
     'lukas-reineke/indent-blankline.nvim',
     -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help indent_blankline.txt`
+    main = 'ibl',
     opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
+      indent = { char = '┊'},
+      --show_trailing_blankline_indent = false,
     },
   },
 
@@ -198,7 +199,28 @@ require('lazy').setup({
     },
     build = ':TSUpdate',
   },
-
+  --{
+  --  'mrcjkb/rustaceanvim',
+  --  version = '^4', -- Recommended
+  --  ft = { 'rust' },
+  --  config = function()
+  --  vim.g.rustaceanvim = {
+  --    inlay_hints = {
+  --      highlight = "NonText",
+  --    },
+  --    tools = {
+  --      hover_actions = {
+  --        auto_focus = true,
+  --      },
+  --    },
+  --    server = {
+  --      on_attach = function(client, bufnr)
+  --        require("lsp-inlayhints").on_attach(client, bufnr)
+  --      end
+  --    }
+  --  }
+  --end
+  --},
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
@@ -440,7 +462,7 @@ local servers = {
   -- clangd = {},
   -- gopls = {},
   -- pyright = {},
-  -- rust_analyzer = {},
+ rust_analyzer = {},
   -- tsserver = {},
 
   lua_ls = {
@@ -450,6 +472,8 @@ local servers = {
     },
   },
 }
+
+
 
 -- Setup neovim lua configuration
 require('neodev').setup()

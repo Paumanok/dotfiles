@@ -306,7 +306,7 @@ myLogHook = return ()
 -- By default, do nothing.
 myStartupHook = do
     setWMName "LG3D"
-    spawnOnce "xrandr --output HDMI-0 --left-of DP-0 &"
+    spawnOnce "xrandr --output HDMI-0 --left-of DP-2 &"
     spawnOnce "nitrogen --restore &"
     spawnOnce "xsetroot -cursor_name left_ptr"
     spawnOnce "picom --config ~/.config/compton.conf &"
